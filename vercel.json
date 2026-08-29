@@ -1,0 +1,10 @@
+{
+  "buildCommand": "echo 'Static website with serverless functions'",
+  "outputDirectory": ".",
+  "functions": {
+    "api/anfrage.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
+}

@@ -205,9 +205,9 @@ section{padding:44px 0}
 <span class="pin">📍</span> Route in Google Maps öffnen
 </a>
 </div></div></section>
-<section class="contact" id="kontakt"><div class="wrap contact-grid"><div><div class="kicker" style="color:#aee26c">Stellplatz anfragen</div><h2>Welchen Stellplatz suchen Sie?</h2><p>PKW oder Motorrad auswählen, gewünschten Mietbeginn angeben und Anfrage absenden.</p></div><form class="form" onsubmit="event.preventDefault();document.getElementById('form-note').hidden=false;"><div class="field"><label for="type">Stellplatzart</label><select id="type" required=""><option value="">Bitte auswählen</option><option>PKW-Stellplatz - 108 € / Monat inkl. MwSt.</option><option>Motorradstellplatz - 59 € / Monat inkl. MwSt.</option><option>Ich interessiere mich für beides</option></select></div><div class="row"><div class="field"><label for="name">Name</label><input id="name" placeholder="Vor- und Nachname" required=""/></div><div class="field"><label for="phone">Telefon</label><input id="phone" placeholder="Telefonnummer"/></div></div><div class="field"><label for="email">E-Mail</label><input id="email" placeholder="name@beispiel.de" required="" type="email"/></div><div class="field"><label for="start">Gewünschter Mietbeginn</label><input id="start" placeholder="z. B. 01.10.2026"/></div><div class="field"><label for="message">Nachricht</label><textarea id="message" placeholder="Optional: Fahrzeugtyp, Fragen oder gewünschter PKW-Stellplatz"></textarea></div><button class="btn btn-primary" style="width:100%" type="submit">Anfrage senden</button><div class="demo-note" hidden="" id="form-note">Vor Veröffentlichung wird dieses Formular noch mit dem endgültigen E-Mail-/CRM-Ziel verbunden.</div><div class="form-note">Hinweise zur Verarbeitung Ihrer Angaben finden Sie in der <a href="#datenschutz">Datenschutzerklärung</a>.</div></form></div></section>
-<section class="legal"><div class="wrap legal-grid"><article class="legal-card" id="impressum"><div class="kicker">Rechtliches</div><h2>Impressum</h2><p><strong>Angaben gemäß § 5 DDG</strong></p><address class="legal-contact"><strong>Dirk Wilkens</strong><br/>Grasweg 48<br/>24118 Kiel<br/>Deutschland</address><h3>Kontakt</h3><p>E-Mail: <strong>[vor Veröffentlichung ergänzen]</strong></p><p>Telefon: <strong>[optional ergänzen]</strong></p><h3>Vermietungsobjekt</h3><p>Tiefgarage Eckernförder Straße 85-87, Kiel</p></article>
-<article class="legal-card" id="datenschutz"><div class="kicker">Datenschutz</div><h2>Datenschutzerklärung</h2><p><strong>Verantwortlicher</strong></p><address class="legal-contact">Dirk Wilkens<br/>Grasweg 48<br/>24118 Kiel<br/>Deutschland<br/>E-Mail: <strong>[vor Veröffentlichung ergänzen]</strong></address><h3>1. Allgemeine Hinweise</h3><p>Personenbezogene Daten werden nur verarbeitet, soweit dies für den Betrieb dieser Internetseite, die Bearbeitung von Anfragen und die Anbahnung bzw. Durchführung eines Mietverhältnisses erforderlich ist.</p><h3>2. Website / Server-Logfiles</h3><p>Beim Aufruf der Website kann der Hosting-Anbieter technisch erforderliche Daten verarbeiten. Hosting-Anbieter und konkrete Speicherdauer werden nach Festlegung des Hostings ergänzt.</p><h3>3. Kontakt- und Mietanfragen</h3><p>Die von Ihnen angegebenen Daten werden zur Bearbeitung Ihrer Anfrage und zur Anbahnung eines Mietvertrags verarbeitet.</p><h3>4. Kontaktformular</h3><p>Die aktuelle Entwurfsfassung ist noch nicht mit einem E-Mail-, CRM- oder sonstigen Übermittlungsdienst verbunden. Vor Livegang wird dieser Abschnitt an die tatsächliche technische Lösung angepasst.</p><h3>5. Cookies, Analyse und Karten</h3><p>Der aktuelle Stand setzt keine Analyse- oder Marketingtools ein und bindet keine externe Google-Maps-Karte ein.</p><h3>6. Ihre Rechte</h3><p>Sie haben im Rahmen der gesetzlichen Voraussetzungen insbesondere Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit sowie ein Beschwerderecht bei einer Datenschutzaufsichtsbehörde.</p><div class="legal-note"><strong>Vor Livegang zu ergänzen:</strong> E-Mail-Adresse, Hosting-Anbieter, Formulardestination und ggf. später eingesetzte Drittanbieter-Dienste.</div></article></div></section>
+<section class="contact" id="kontakt"><div class="wrap contact-grid"><div><div class="kicker" style="color:#aee26c">Stellplatz anfragen</div><h2>Welchen Stellplatz suchen Sie?</h2><p>PKW oder Motorrad auswählen, gewünschten Mietbeginn angeben und Anfrage absenden.</p></div><form class="form" id="contact-form" novalidate=""><input aria-hidden="true" autocomplete="off" id="company_website" name="company_website" style="position:absolute;left:-9999px;" tabindex="-1" type="text"/><div class="field"><label for="type">Stellplatzart</label><select id="type" required=""><option value="">Bitte auswählen</option><option>PKW-Stellplatz - 108 € / Monat inkl. MwSt.</option><option>Motorradstellplatz - 59 € / Monat inkl. MwSt.</option><option>Ich interessiere mich für beides</option></select></div><div class="row"><div class="field"><label for="name">Name</label><input id="name" placeholder="Vor- und Nachname" required=""/></div><div class="field"><label for="phone">Telefon</label><input id="phone" placeholder="Telefonnummer"/></div></div><div class="field"><label for="email">E-Mail</label><input id="email" placeholder="name@beispiel.de" required="" type="email"/></div><div class="field"><label for="start">Gewünschter Mietbeginn</label><input id="start" placeholder="z. B. 01.10.2026"/></div><div class="field"><label for="message">Nachricht</label><textarea id="message" placeholder="Optional: Fahrzeugtyp, Fragen oder gewünschter PKW-Stellplatz"></textarea></div><div class="field" style="margin-bottom:16px;"><label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;"><input id="privacy" required="" style="margin-top:2px;flex:0 0 auto;" type="checkbox"/><span style="font-size:14px;line-height:1.4;">Ich habe die <a href="#datenschutz">Datenschutzerklärung</a> zur Kenntnis genommen und akzeptiere diese.</span></label></div><button class="btn btn-primary" id="submit-btn" style="width:100%" type="submit">Anfrage senden</button><div aria-live="polite" aria-relevant="additions" id="form-message" role="status" style="display:none;margin-top:16px;padding:14px;border-radius:10px;font-size:14px;line-height:1.5;"></div><div class="form-note">Hinweise zur Verarbeitung Ihrer Angaben finden Sie in der <a href="#datenschutz">Datenschutzerklärung</a>.</div></form></div></section>
+<section class="legal"><div class="wrap legal-grid"><article class="legal-card" id="impressum"><div class="kicker">Rechtliches</div><h2>Impressum</h2><p><strong>Angaben gemäß § 5 DDG</strong></p><address class="legal-contact"><strong>Dirk Wilkens</strong><br/>Grasweg 48<br/>24118 Kiel<br/>Deutschland</address><h3>Kontakt</h3><p>E-Mail: anfrage@tiefgarage-kiel.de</p><h3>Vermietungsobjekt</h3><p>Tiefgarage Eckernförder Straße 85-87, Kiel</p></article>
+<article class="legal-card" id="datenschutz"><div class="kicker">Datenschutz</div><h2>Datenschutzerklärung</h2><p><strong>Verantwortlicher</strong></p><address class="legal-contact">Dirk Wilkens<br/>Grasweg 48<br/>24118 Kiel<br/>Deutschland<br/>E-Mail: anfrage@tiefgarage-kiel.de</address><h3>1. Allgemeine Hinweise</h3><p>Personenbezogene Daten werden nur verarbeitet, soweit dies für den Betrieb dieser Internetseite, die Bearbeitung von Anfragen und die Anbahnung bzw. Durchführung eines Mietverhältnisses erforderlich ist.</p><h3>2. Website / Server-Logfiles</h3><p>Beim Aufruf der Website kann der Hosting-Anbieter technisch erforderliche Daten verarbeiten. Hosting-Anbieter und konkrete Speicherdauer werden nach Festlegung des Hostings ergänzt.</p><h3>3. Kontakt- und Mietanfragen</h3><p>Die von Ihnen angegebenen Daten werden zur Bearbeitung Ihrer Anfrage und zur Anbahnung eines Mietvertrags verarbeitet.</p><h3>4. Kontaktformular</h3><p>Die Daten aus dem Kontaktformular werden ausschließlich zur Bearbeitung Ihrer Anfrage verwendet. Sie werden nicht gespeichert und nicht an Dritte weitergegeben.</p><h3>5. E-Mail-Versand mit Resend</h3><p>Ihre Anfrage wird über den Dienst Resend (<a href="https://resend.com" target="_blank" rel="noopener">resend.com</a>) versendet. Eine automatische Bestätigung wird an die angegebene E-Mail-Adresse gesendet.</p><h3>6. Ihre Rechte</h3><p>Sie haben im Rahmen der gesetzlichen Voraussetzungen insbesondere Rechte auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit sowie ein Beschwerderecht bei einer Datenschutzaufsichtsbehörde.</p></article></div></section>
 </main>
 <footer><div class="wrap footer"><div class="footer-logo"><img alt="Tiefgarage Kiel" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgMTUwIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0IDQpIj48cmVjdCB3aWR0aD0iMTE2IiBoZWlnaHQ9IjEwNCIgcng9IjI0IiBmaWxsPSIjMTQ2MDk1Ii8+PHRleHQgeD0iNTgiIHk9Ijc1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNjgiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiNmZmYiPlA8L3RleHQ+PHBhdGggZD0iTTQ1IDk0SDcxVjExMkg4OEw1OCAxNDBMMjggMTEySDQ1WiIgZmlsbD0iIzcyYzcyYyIvPjwvZz48dGV4dCB4PSIxNDAiIHk9IjYxIiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSI4MDAiIGZpbGw9IiNmZmZmZmYiPlRpZWZnYXJhZ2U8L3RleHQ+PHRleHQgeD0iMTQwIiB5PSIxMDgiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0iI2ZmZmZmZiI+S2llbDwvdGV4dD48dGV4dCB4PSIxNDIiIHk9IjEzOCIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjNzJjNzJjIj50aWVmZ2FyYWdlLWtpZWwuZGU8L3RleHQ+PC9zdmc+"/><span>© 2026 · Eckernförder Straße 85-87, Kiel</span></div><div><a href="#impressum">Impressum</a> · <a href="#datenschutz">Datenschutz</a></div></div></footer>
 <div class="mobile-cta"><a class="btn btn-primary" href="#kontakt">PKW oder Motorrad anfragen</a></div>
@@ -298,6 +298,81 @@ section{padding:44px 0}
     contactVisible = entries[0].isIntersecting;
     updateStickyCta();
   }, { threshold: 0 }).observe(contactSection);
+})();
+
+// Form submission handler
+(function() {
+  const form = document.getElementById('contact-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const messageDiv = document.getElementById('form-message');
+  
+  if (!form || !submitBtn || !messageDiv) return;
+
+  // Track form load time for spam detection
+  const formLoadTime = Date.now();
+
+  function showMessage(text, isSuccess) {
+    messageDiv.textContent = text;
+    messageDiv.style.display = 'block';
+    messageDiv.style.backgroundColor = isSuccess ? '#d4edda' : '#f8d7da';
+    messageDiv.style.color = isSuccess ? '#155724' : '#721c24';
+    messageDiv.style.borderLeft = `4px solid ${isSuccess ? '#28a745' : '#dc3545'}`;
+    messageDiv.focus();
+  }
+
+  function resetForm() {
+    form.reset();
+    document.getElementById('privacy').checked = false;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Anfrage wird gesendet …';
+    messageDiv.style.display = 'none';
+
+    try {
+      // Collect form data
+      const formData = {
+        type: document.getElementById('type').value,
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value || '',
+        email: document.getElementById('email').value,
+        start: document.getElementById('start').value || '',
+        message: document.getElementById('message').value || '',
+        company_website: document.getElementById('company_website').value || '',
+        timestamp: formLoadTime,
+      };
+
+      // Send request to API
+      const response = await fetch('/api/anfrage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        showMessage('Vielen Dank. Ihre Anfrage wurde erfolgreich übermittelt. Wir melden uns kurzfristig bei Ihnen.', true);
+        resetForm();
+      } else {
+        showMessage('Ihre Anfrage konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an anfrage@tiefgarage-kiel.de.', false);
+      }
+    } catch (error) {
+      console.error('[Form] Submission error - generic error occurred');
+      showMessage('Ihre Anfrage konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an anfrage@tiefgarage-kiel.de.', false);
+    } finally {
+      // Re-enable submit button
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  });
 })();
 </script>
 </body></html>
