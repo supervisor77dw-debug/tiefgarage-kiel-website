@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 const validateEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email) && email.length <= 254;
