@@ -311,6 +311,19 @@ section{padding:44px 0}
   
   if (!form || !submitBtn || !messageDiv) return;
 
+  const legacyHoneypot = document.getElementById('company_website');
+  if (legacyHoneypot) legacyHoneypot.remove();
+
+  const formGuard = document.createElement('input');
+  formGuard.type = 'text';
+  formGuard.id = 'form_guard';
+  formGuard.name = 'form_guard';
+  formGuard.autocomplete = 'new-password';
+  formGuard.tabIndex = -1;
+  formGuard.setAttribute('aria-hidden', 'true');
+  formGuard.style.cssText = 'position:absolute;left:-9999px;';
+  form.appendChild(formGuard);
+
   // Track form load time for spam detection
   const formLoadTime = Date.now();
 
@@ -350,7 +363,7 @@ section{padding:44px 0}
         email: document.getElementById('email').value,
         start: document.getElementById('start').value || '',
         message: document.getElementById('message').value || '',
-        company_website: document.getElementById('company_website').value || '',
+        company_website: formGuard.value || '',
         timestamp: formLoadTime,
       };
 
