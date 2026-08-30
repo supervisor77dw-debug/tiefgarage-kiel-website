@@ -331,6 +331,9 @@ section{padding:44px 0}
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     console.info('[Form] form_submit_started');
+    let stage = 'submit_started';
+    let response;
+    let result;
     
     // Disable submit button
     submitBtn.disabled = true;
@@ -339,7 +342,7 @@ section{padding:44px 0}
     messageDiv.style.display = 'none';
 
     try {
-      // Collect form data
+      stage = 'collect_form_data';
       const formData = {
         type: document.getElementById('type').value,
         name: document.getElementById('name').value,
@@ -351,9 +354,17 @@ section{padding:44px 0}
         timestamp: formLoadTime,
       };
 
-      // Send request to API
+      const privacyAccepted = document.getElementById('privacy').checked;
+      const honeypotEmpty = formData.company_website.length === 0;
+      console.info('[Form] form_state', {
+        formDataValid: Boolean(formData.type && formData.name && formData.phone && formData.email),
+        privacyAccepted,
+        honeypotEmpty,
+      });
+
+      stage = 'fetch';
       console.info('[Form] fetch_started');
-      const response = await fetch('/api/anfrage', {
+      response = await fetch('/api/anfrage', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -361,16 +372,26 @@ section{padding:44px 0}
         body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
+      stage = 'parse_response';
+      result = await response.json();
 
+      stage = 'validate_response';
       if (!response.ok || result.ok !== true || result.internalSent !== true) {
         throw new Error('request_failed');
       }
 
+      stage = 'show_success';
       showMessage('Vielen Dank. Ihre Anfrage wurde erfolgreich übermittelt. Wir melden uns kurzfristig bei Ihnen.', true);
       resetForm();
     } catch (error) {
-      console.error('[Form] Submission error:', error.message);
+      console.error('[Form] FORM ERROR', {
+        stage,
+        status: response?.status,
+        ok: result?.ok,
+        internalSent: result?.internalSent,
+        errorName: error?.name,
+        errorMessage: error?.message,
+      });
       showMessage('Ihre Anfrage konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an anfrage@tiefgarage-kiel.de.', false);
     } finally {
       // Re-enable submit button
