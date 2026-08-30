@@ -111,8 +111,8 @@ const buildConfirmationEmail = (data) => {
     : '';
   const startHtml = data.start
     ? `<tr>
-              <td style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Gewünschter Mietbeginn</td>
-              <td align="right" style="padding:0 0 10px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.start)}</td>
+              <td width="42%" style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Gewünschter Mietbeginn</td>
+              <td style="padding:0 0 10px 16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.start)}</td>
             </tr>`
     : '';
   const text = `Vielen Dank für Ihre Anfrage zu einem Stellplatz in der Tiefgarage Kiel.
@@ -181,13 +181,13 @@ Diese Nachricht wurde automatisch als Bestätigung Ihrer Stellplatzanfrage verse
                   <td style="padding:4px 20px 10px 20px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
                       <tr>
-                        <td style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Stellplatzart</td>
-                        <td align="right" style="padding:0 0 10px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.type)}</td>
+                        <td width="42%" style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Stellplatzart</td>
+                        <td style="padding:0 0 10px 16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.type)}</td>
                       </tr>
                       ${startHtml}
                       <tr>
-                        <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Name</td>
-                        <td align="right" style="padding:0 0 8px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.name)}</td>
+                        <td width="42%" style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Name</td>
+                        <td style="padding:0 0 8px 16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.name)}</td>
                       </tr>
                     </table>
                   </td>
@@ -210,7 +210,7 @@ Diese Nachricht wurde automatisch als Bestätigung Ihrer Stellplatzanfrage verse
             </td>
           </tr>
           <tr>
-            <td style="padding:20px 32px 24px 32px;border-top:1px solid #E2E6EA;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#66717D;">
+            <td style="padding:18px 32px 22px 32px;border-top:1px solid #E2E6EA;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:16px;color:#66717D;">
               <strong style="color:#102F52;">Tiefgarage Kiel</strong><br>
               Eckernförder Straße 85–87 · 24118 Kiel<br>
               <a href="https://www.tiefgarage-kiel.de" style="color:#66717D;text-decoration:underline;">tiefgarage-kiel.de</a><br><br>
@@ -229,18 +229,38 @@ Diese Nachricht wurde automatisch als Bestätigung Ihrer Stellplatzanfrage verse
 
 export default async (req, res) => {
   const requestId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9);
+  const diagnostics = {
+    requestId,
+    timestamp: null,
+    userAgent: req.headers['user-agent'] || '',
+    requestReceived: true,
+    validationPassed: false,
+    honeypotEmpty: false,
+    timingPassed: false,
+    resendInternalAttempted: false,
+    resendInternalSuccess: false,
+    confirmationAttempted: false,
+    confirmationSuccess: false,
+    httpStatus: null,
+    technicalException: null,
+  };
   const log = (stage) => {
     console.log(`[anfrage:${requestId}] ${stage}`);
   };
   const logError = (stage, type) => {
     console.error(`[anfrage:${requestId}] error stage=${stage} type=${type}`);
   };
+  const respond = (status, payload) => {
+    diagnostics.httpStatus = status;
+    console.log(`[anfrage:${requestId}] diagnostic ${JSON.stringify(diagnostics)}`);
+    return res.status(status).json(payload);
+  };
 
   log('request_received');
 
   if (req.method !== 'POST') {
     logError('request', 'method_not_post');
-    return res.status(405).json({ ok: false, error: 'Method not allowed', requestId });
+    return respond(405, { ok: false, error: 'Method not allowed', requestId });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -249,19 +269,21 @@ export default async (req, res) => {
 
   if (!apiKey || !contactTo || !contactFrom) {
     logError('environment', 'missing_configuration');
-    return res.status(500).json({ ok: false, error: 'Konfiguration nicht vollständig. Bitte später erneut versuchen.', requestId });
+    return respond(500, { ok: false, error: 'Konfiguration nicht vollständig. Bitte später erneut versuchen.', requestId });
   }
   
   log('env_ok');
 
   const { type, name, phone, email, start, message, company_website, timestamp } = req.body || {};
+  diagnostics.timestamp = typeof timestamp === 'number' || typeof timestamp === 'string' ? timestamp : null;
 
   log('body_parsed');
 
   // Honeypot check
+  diagnostics.honeypotEmpty = !company_website || company_website.trim().length === 0;
   if (company_website && company_website.trim().length > 0) {
     logError('spam_check', 'honeypot');
-    return res.status(200).json({ ok: true, message: 'Anfrage erhalten', requestId });
+    return respond(200, { ok: true, message: 'Anfrage erhalten', requestId });
   }
 
   // Time check: reject if submitted too quickly
@@ -271,14 +293,15 @@ export default async (req, res) => {
     const diff = now - submittedAt;
     if (diff < 2000) {
       logError('validation', 'timing_too_fast');
-      return res.status(400).json({ ok: false, error: 'Bitte etwas gedulden vor dem Absenden.', requestId });
+      return respond(400, { ok: false, error: 'Bitte etwas gedulden vor dem Absenden.', requestId });
     }
   }
+  diagnostics.timingPassed = true;
 
   // Validate required fields
   if (!name || !email || !type) {
     logError('validation', 'required_fields_missing');
-    return res.status(400).json({ ok: false, error: 'Erforderliche Felder fehlen', requestId });
+    return respond(400, { ok: false, error: 'Erforderliche Felder fehlen', requestId });
   }
 
   // Sanitize and validate
@@ -291,9 +314,10 @@ export default async (req, res) => {
 
   if (!sanitizedName || !validateEmail(sanitizedEmail) || !normalizedType) {
     logError('validation', 'invalid_input');
-    return res.status(400).json({ ok: false, error: 'Ungültige Eingabedaten', requestId });
+    return respond(400, { ok: false, error: 'Ungültige Eingabedaten', requestId });
   }
 
+  diagnostics.validationPassed = true;
   log('validation_ok');
 
   // Prepare email data
@@ -312,6 +336,7 @@ export default async (req, res) => {
 
   try {
     log('resend_internal_start');
+    diagnostics.resendInternalAttempted = true;
     const internalRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -330,18 +355,20 @@ export default async (req, res) => {
 
     if (!internalRes.ok) {
       logError('resend_internal', 'request_failed');
-      return res.status(500).json({ ok: false, error: 'Anfrage konnte nicht versendet werden. Bitte versuchen Sie es später erneut.', requestId });
+      return respond(500, { ok: false, error: 'Anfrage konnte nicht versendet werden. Bitte versuchen Sie es später erneut.', requestId });
     }
 
     const internalData = await internalRes.json();
     const internalEmailId = internalData.id;
     if (!internalEmailId) {
       logError('resend_internal', 'missing_email_id');
-      return res.status(500).json({ ok: false, error: 'Anfrage konnte nicht versendet werden. Bitte versuchen Sie es später erneut.', requestId });
+      return respond(500, { ok: false, error: 'Anfrage konnte nicht versendet werden. Bitte versuchen Sie es später erneut.', requestId });
     }
+    diagnostics.resendInternalSuccess = true;
     console.log(`[anfrage:${requestId}] resend_internal_success id=${internalEmailId}`);
 
     log('resend_confirmation_start');
+    diagnostics.confirmationAttempted = true;
     const confirmRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -361,7 +388,7 @@ export default async (req, res) => {
     if (!confirmRes.ok) {
       logError('resend_confirmation', 'request_failed');
       log('response_200');
-      return res.status(200).json({ 
+      return respond(200, {
         ok: true,
         internalSent: true,
         confirmationSent: false,
@@ -374,7 +401,7 @@ export default async (req, res) => {
       if (!confirmEmailId) {
         logError('resend_confirmation', 'missing_email_id');
         log('response_200');
-        return res.status(200).json({
+        return respond(200, {
           ok: true,
           internalSent: true,
           confirmationSent: false,
@@ -382,9 +409,10 @@ export default async (req, res) => {
           internalEmailId
         });
       }
+      diagnostics.confirmationSuccess = true;
       console.log(`[anfrage:${requestId}] resend_confirmation_success id=${confirmEmailId}`);
       log('response_200');
-      return res.status(200).json({ 
+      return respond(200, {
         ok: true,
         internalSent: true,
         confirmationSent: true,
@@ -394,7 +422,8 @@ export default async (req, res) => {
       });
     }
   } catch (error) {
+    diagnostics.technicalException = error instanceof Error ? error.message : 'unknown_error';
     logError('handler', 'unexpected_error');
-    return res.status(500).json({ ok: false, error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.', requestId });
+    return respond(500, { ok: false, error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.', requestId });
   }
 };

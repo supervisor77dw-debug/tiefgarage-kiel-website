@@ -392,7 +392,9 @@ section{padding:44px 0}
         errorName: error?.name,
         errorMessage: error?.message,
       });
-      showMessage('Ihre Anfrage konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an anfrage@tiefgarage-kiel.de.', false);
+      const errorId = result?.requestId;
+      const errorIdText = errorId ? `\nFehler-ID: ${errorId}` : '';
+      showMessage(`Ihre Anfrage konnte leider nicht gesendet werden. Bitte versuchen Sie es erneut oder schreiben Sie uns direkt an anfrage@tiefgarage-kiel.de.${errorIdText}`, false);
     } finally {
       // Re-enable submit button
       submitBtn.disabled = false;
