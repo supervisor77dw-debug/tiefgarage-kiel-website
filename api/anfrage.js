@@ -152,7 +152,7 @@ Diese Nachricht wurde automatisch als Bestätigung Ihrer Stellplatzanfrage verse
             <td style="padding:30px 32px 20px 32px;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:28px;font-weight:bold;color:#102F52;">Tiefgarage Kiel</td>
+                  <td><img src="https://www.tiefgarage-kiel.de/assets/tiefgarage-kiel-logo.png" width="170" alt="Tiefgarage Kiel" style="display:block;border:0;outline:none;text-decoration:none;width:170px;height:auto;"></td>
                 </tr>
               </table>
             </td>
