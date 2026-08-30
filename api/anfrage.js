@@ -152,38 +152,58 @@ Bitte antworten Sie nicht auf diese automatische Nachricht. Bei Rückfragen erre
 };
 
 export default async (req, res) => {
+  // Generate unique request ID for tracing
+  const requestId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2, 9);
+  const log = (stage, detail = '') => {
+    console.log(`[anfrage:${requestId}] ${stage}${detail ? ' ' + detail : ''}`);
+  };
+
+  log('request_received', `method=${req.method}`);
+
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    log('error', 'method_not_post');
+    return res.status(405).json({ error: 'Method not allowed', requestId });
   }
+
+  log('method_ok');
 
   const apiKey = process.env.RESEND_API_KEY;
   const contactTo = process.env.CONTACT_TO;
   const contactFrom = process.env.CONTACT_FROM;
 
   if (!apiKey || !contactTo || !contactFrom) {
-    console.error('[anfrage.js] Missing Resend configuration');
-    return res.status(500).json({ error: 'Konfiguration nicht vollständig. Bitte später erneut versuchen.' });
+    log('error', `env_missing apiKey=${!!apiKey} contactTo=${!!contactTo} contactFrom=${!!contactFrom}`);
+    return res.status(500).json({ error: 'Konfiguration nicht vollständig. Bitte später erneut versuchen.', requestId });
   }
+  
+  log('env_ok');
 
   const { type, name, phone, email, start, message, company_website, timestamp } = req.body;
 
+  log('body_parsed');
+
   // Honeypot check
   if (company_website && company_website.trim().length > 0) {
-    return res.status(200).json({ success: true, message: 'Anfrage erhalten' });
+    log('honeypot_triggered');
+    return res.status(200).json({ success: true, message: 'Anfrage erhalten', requestId });
   }
 
   // Time check: reject if submitted too quickly
   if (timestamp) {
     const submittedAt = parseInt(timestamp, 10);
     const now = Date.now();
-    if (now - submittedAt < 2000) {
-      return res.status(400).json({ error: 'Bitte etwas gedulden vor dem Absenden.' });
+    const diff = now - submittedAt;
+    log('timing_check', `diff=${diff}ms`);
+    if (diff < 2000) {
+      log('error', 'timing_too_fast');
+      return res.status(400).json({ error: 'Bitte etwas gedulden vor dem Absenden.', requestId });
     }
   }
 
   // Validate required fields
   if (!name || !email || !type) {
-    return res.status(400).json({ error: 'Erforderliche Felder fehlen' });
+    log('error', 'required_fields_missing');
+    return res.status(400).json({ error: 'Erforderliche Felder fehlen', requestId });
   }
 
   // Sanitize and validate
@@ -195,8 +215,11 @@ export default async (req, res) => {
   const normalizedType = normalizeType(type);
 
   if (!sanitizedName || !validateEmail(sanitizedEmail) || !normalizedType) {
-    return res.status(400).json({ error: 'Ungültige Eingabedaten' });
+    log('error', 'validation_failed');
+    return res.status(400).json({ error: 'Ungültige Eingabedaten', requestId });
   }
+
+  log('validation_ok', `type=${normalizedType}`);
 
   // Prepare email data
   const emailData = {
@@ -214,6 +237,7 @@ export default async (req, res) => {
 
   try {
     // Send internal email
+    log('calling_resend_internal');
     const internalRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -230,13 +254,21 @@ export default async (req, res) => {
       }),
     });
 
+    log('resend_internal_responded', `status=${internalRes.status}`);
+
     if (!internalRes.ok) {
       const err = await internalRes.text();
-      console.error('[anfrage.js] Resend internal email failed:', err);
-      return res.status(500).json({ error: 'Anfrage konnte nicht versendet werden. Bitte versuchen Sie es später erneut.' });
+      log('error', `resend_internal_failed status=${internalRes.status}`);
+      return res.status(500).json({ error: 'Anfrage konnte nicht versendet werden. Bitte versuchen Sie es später erneut.', requestId });
     }
 
+    // Parse the response to get email ID
+    const internalData = await internalRes.json();
+    const internalEmailId = internalData.id || 'unknown';
+    log('internal_sent', `emailId=${internalEmailId}`);
+
     // Send confirmation email to user
+    log('calling_resend_confirmation');
     const confirmRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -253,15 +285,22 @@ export default async (req, res) => {
       }),
     });
 
+    log('resend_confirmation_responded', `status=${confirmRes.status}`);
+
     if (!confirmRes.ok) {
       const err = await confirmRes.text();
-      console.error('[anfrage.js] Resend confirmation email failed:', err);
+      log('warning', `resend_confirmation_failed status=${confirmRes.status}`);
       // Log but don't fail - internal email was successful
+    } else {
+      const confirmData = await confirmRes.json();
+      const confirmEmailId = confirmData.id || 'unknown';
+      log('confirmation_sent', `emailId=${confirmEmailId}`);
     }
 
-    return res.status(200).json({ success: true, message: 'Anfrage erfolgreich versendet' });
+    log('response_200');
+    return res.status(200).json({ success: true, message: 'Anfrage erfolgreich versendet', requestId, internalEmailId });
   } catch (error) {
-    console.error('[anfrage.js] Unexpected error:', error.message);
-    return res.status(500).json({ error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.' });
+    log('error', `unexpected_error message=${error.message}`);
+    return res.status(500).json({ error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.', requestId });
   }
 };
