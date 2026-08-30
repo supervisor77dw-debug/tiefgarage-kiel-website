@@ -98,53 +98,129 @@ tiefgarage-kiel.de`;
   return { text, html };
 };
 
-const buildConfirmationEmail = (email) => {
-  const text = `Vielen Dank für Ihre Anfrage.
+const escapeHtml = (value) => String(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;');
+
+const buildConfirmationEmail = (data) => {
+  const startRow = data.start
+    ? `Gewünschter Mietbeginn: ${data.start}\n`
+    : '';
+  const startHtml = data.start
+    ? `<tr>
+              <td style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Gewünschter Mietbeginn</td>
+              <td align="right" style="padding:0 0 10px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.start)}</td>
+            </tr>`
+    : '';
+  const text = `Vielen Dank für Ihre Anfrage zu einem Stellplatz in der Tiefgarage Kiel.
 
 Wir haben Ihre Nachricht erhalten und melden uns kurzfristig zur aktuellen Verfügbarkeit des gewünschten Stellplatzes.
 
+Ihre Anfrage
+Stellplatzart: ${data.type}
+${startRow}Name: ${data.name}
+
 Tiefgarage Kiel
 Eckernförder Straße 85–87
-24116 Kiel
+24118 Kiel
 
+PKW-Stellplatz: 108 € / Monat inkl. MwSt.
+Motorrad: 59 € / Monat inkl. MwSt.
+Zufahrtshöhe PKW: max. 1,90 m
+
+Bei Rückfragen erreichen Sie uns unter anfrage@tiefgarage-kiel.de.
 tiefgarage-kiel.de
 
-Bitte antworten Sie nicht auf diese automatische Nachricht. Bei Rückfragen erreichen Sie uns unter anfrage@tiefgarage-kiel.de.`;
+Diese Nachricht wurde automatisch als Bestätigung Ihrer Stellplatzanfrage versendet.`;
 
-  const html = `<!DOCTYPE html>
-<html>
+  const html = `<!doctype html>
+<html lang="de">
 <head>
   <meta charset="UTF-8">
-  <style>
-    body { font-family: Arial, sans-serif; color: #10243b; background: #f6f8fa; }
-    .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .header { border-bottom: 3px solid #8bc53f; padding-bottom: 20px; margin-bottom: 20px; }
-    .header h1 { margin: 0; color: #10243b; font-size: 24px; }
-    .content { line-height: 1.6; color: #5d6b7a; }
-    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e9ee; font-size: 12px; color: #5d6b7a; }
-    .address { font-style: normal; margin: 15px 0; }
-    .green { color: #8bc53f; font-weight: bold; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>Vielen Dank!</h1>
-    </div>
-    <div class="content">
-      <p>Vielen Dank für Ihre Anfrage.</p>
-      <p>Wir haben Ihre Nachricht erhalten und melden uns kurzfristig zur aktuellen Verfügbarkeit des gewünschten Stellplatzes.</p>
-      <div class="address">
-        <strong>Tiefgarage Kiel</strong><br>
-        Eckernförder Straße 85–87<br>
-        24116 Kiel<br><br>
-        <span class="green">tiefgarage-kiel.de</span>
-      </div>
-    </div>
-    <div class="footer">
-      <p>Bitte antworten Sie nicht auf diese automatische Nachricht. Bei Rückfragen erreichen Sie uns unter anfrage@tiefgarage-kiel.de.</p>
-    </div>
-  </div>
+<body style="margin:0;padding:0;background-color:#F3F5F7;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#F3F5F7;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#FFFFFF;">
+          <tr>
+            <td style="padding:30px 32px 20px 32px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:28px;font-weight:bold;color:#102F52;">Tiefgarage Kiel</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px;"><div style="height:3px;line-height:3px;background-color:#72C72C;font-size:3px;">&nbsp;</div></td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 0 32px;font-family:Arial,Helvetica,sans-serif;color:#1F2933;">
+              <h1 style="margin:0;font-size:26px;line-height:34px;font-weight:bold;color:#102F52;">Vielen Dank für Ihre Anfrage!</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:18px 32px 0 32px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:25px;color:#1F2933;">
+              <p style="margin:0 0 14px 0;">Vielen Dank für Ihre Anfrage zu einem Stellplatz in der Tiefgarage Kiel.</p>
+              <p style="margin:0;">Wir haben Ihre Nachricht erhalten und melden uns kurzfristig zur aktuellen Verfügbarkeit des gewünschten Stellplatzes.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px 32px 0 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px solid #E2E6EA;background-color:#F9FAFB;">
+                <tr>
+                  <td style="padding:18px 20px 8px 20px;font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:23px;font-weight:bold;color:#102F52;">Ihre Anfrage</td>
+                </tr>
+                <tr>
+                  <td style="padding:4px 20px 10px 20px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+                      <tr>
+                        <td style="padding:0 0 10px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Stellplatzart</td>
+                        <td align="right" style="padding:0 0 10px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.type)}</td>
+                      </tr>
+                      ${startHtml}
+                      <tr>
+                        <td style="padding:0 0 8px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#66717D;">Name</td>
+                        <td align="right" style="padding:0 0 8px 20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#1F2933;font-weight:bold;">${escapeHtml(data.name)}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:26px 32px 0 32px;font-family:Arial,Helvetica,sans-serif;color:#1F2933;">
+              <h2 style="margin:0 0 10px 0;font-size:18px;line-height:25px;font-weight:bold;color:#102F52;">Tiefgarage Kiel</h2>
+              <p style="margin:0;font-size:15px;line-height:23px;color:#66717D;">Eckernförder Straße 85–87<br>24118 Kiel</p>
+              <p style="margin:14px 0 0 0;font-size:15px;line-height:23px;color:#1F2933;"><strong>PKW-Stellplatz:</strong> 108 € / Monat inkl. MwSt.<br><strong>Motorrad:</strong> 59 € / Monat inkl. MwSt.<br><strong>Zufahrtshöhe PKW:</strong> max. 1,90 m</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:26px 32px 30px 32px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:23px;color:#1F2933;">
+              <p style="margin:0 0 8px 0;">Bei Rückfragen erreichen Sie uns unter</p>
+              <p style="margin:0 0 8px 0;"><a href="mailto:anfrage@tiefgarage-kiel.de" style="color:#102F52;font-weight:bold;text-decoration:underline;">anfrage@tiefgarage-kiel.de</a></p>
+              <p style="margin:0;"><a href="https://www.tiefgarage-kiel.de" style="color:#102F52;font-weight:bold;text-decoration:underline;">tiefgarage-kiel.de</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 32px 24px 32px;border-top:1px solid #E2E6EA;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#66717D;">
+              <strong style="color:#102F52;">Tiefgarage Kiel</strong><br>
+              Eckernförder Straße 85–87 · 24118 Kiel<br>
+              <a href="https://www.tiefgarage-kiel.de" style="color:#66717D;text-decoration:underline;">tiefgarage-kiel.de</a><br><br>
+              Diese Nachricht wurde automatisch als Bestätigung Ihrer Stellplatzanfrage versendet.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>`;
 
@@ -232,7 +308,7 @@ export default async (req, res) => {
 
   const subject = `Neue Stellplatzanfrage – ${normalizedType}`;
   const { text: internalText, html: internalHtml } = buildInternalEmail(emailData);
-  const { text: confirmText, html: confirmHtml } = buildConfirmationEmail(sanitizedEmail);
+  const { text: confirmText, html: confirmHtml } = buildConfirmationEmail(emailData);
 
   try {
     log('resend_internal_start');
