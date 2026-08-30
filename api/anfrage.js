@@ -225,7 +225,7 @@ export default async (req, res) => {
       body: JSON.stringify({
         from: contactFrom,
         to: contactTo,
-        replyTo: sanitizedEmail,
+        reply_to: sanitizedEmail,
         subject: subject,
         text: internalText,
         html: internalHtml,
@@ -248,6 +248,7 @@ export default async (req, res) => {
       body: JSON.stringify({
         from: contactFrom,
         to: sanitizedEmail,
+        reply_to: 'anfrage@tiefgarage-kiel.de',
         subject: 'Ihre Stellplatzanfrage – Tiefgarage Kiel',
         text: confirmText,
         html: confirmHtml,
