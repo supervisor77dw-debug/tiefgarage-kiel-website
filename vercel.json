@@ -1,6 +1,21 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "echo 'Static website with serverless functions'",
   "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "header",
+          "key": "host",
+          "value": "tiefgarage-kiel-website.vercel.app"
+        }
+      ],
+      "destination": "https://www.tiefgarage-kiel.de/:path*",
+      "permanent": true
+    }
+  ],
   "functions": {
     "api/anfrage.js": {
       "memory": 1024,
