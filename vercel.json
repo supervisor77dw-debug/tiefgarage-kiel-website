@@ -15,6 +15,23 @@
       "permanent": true
     }
   ],
+  "headers": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "tiefgarage-kiel-website.vercel.app"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
+  ],
   "functions": {
     "api/anfrage.js": {
       "memory": 1024,
