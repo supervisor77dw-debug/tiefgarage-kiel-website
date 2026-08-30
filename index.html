@@ -330,6 +330,7 @@ section{padding:44px 0}
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    console.info('[Form] form_submit_started');
     
     // Disable submit button
     submitBtn.disabled = true;
@@ -351,6 +352,7 @@ section{padding:44px 0}
       };
 
       // Send request to API
+      console.info('[Form] fetch_started');
       const response = await fetch('/api/anfrage', {
         method: 'POST',
         headers: {
@@ -361,7 +363,7 @@ section{padding:44px 0}
 
       const result = await response.json();
 
-      if (!response.ok || !result.ok) {
+      if (!response.ok || result.ok !== true || result.internalSent !== true) {
         throw new Error('request_failed');
       }
 
