@@ -4,20 +4,20 @@
   "outputDirectory": ".",
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "tiefgarage-kiel-website.vercel.app"
         }
       ],
-      "destination": "https://www.tiefgarage-kiel.de/:path*",
+      "destination": "https://www.tiefgarage-kiel.de/$1",
       "permanent": true
     }
   ],
   "headers": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
