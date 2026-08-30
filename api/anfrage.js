@@ -185,7 +185,7 @@ export default async (req, res) => {
   // Honeypot check
   if (company_website && company_website.trim().length > 0) {
     log('honeypot_triggered');
-    return res.status(200).json({ success: true, message: 'Anfrage erhalten', requestId });
+    return res.status(200).json({ ok: true, message: 'Anfrage erhalten', requestId });
   }
 
   // Time check: reject if submitted too quickly
@@ -291,16 +291,30 @@ export default async (req, res) => {
       const err = await confirmRes.text();
       log('warning', `resend_confirmation_failed status=${confirmRes.status}`);
       // Log but don't fail - internal email was successful
+      log('response_200_partial');
+      return res.status(200).json({ 
+        ok: true,
+        internalSent: true,
+        confirmationSent: false,
+        requestId, 
+        internalEmailId 
+      });
     } else {
       const confirmData = await confirmRes.json();
       const confirmEmailId = confirmData.id || 'unknown';
       log('confirmation_sent', `emailId=${confirmEmailId}`);
+      log('response_200');
+      return res.status(200).json({ 
+        ok: true,
+        internalSent: true,
+        confirmationSent: true,
+        requestId, 
+        internalEmailId,
+        confirmEmailId
+      });
     }
-
-    log('response_200');
-    return res.status(200).json({ success: true, message: 'Anfrage erfolgreich versendet', requestId, internalEmailId });
   } catch (error) {
     log('error', `unexpected_error message=${error.message}`);
-    return res.status(500).json({ error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.', requestId });
+    return res.status(500).json({ ok: false, error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.', requestId });
   }
 };
